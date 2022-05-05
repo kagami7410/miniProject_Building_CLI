@@ -69,6 +69,7 @@ public class FlightSystem {
     // TODO: Customer Action
     private void customerAction(String response) {
 
+        // "are you an existing customer?"
         if(response.equals("yes")) {
             System.out.println("What is your passenger id?");
             String passengerId = scanner.next().toUpperCase();
@@ -83,6 +84,7 @@ public class FlightSystem {
             }
             else if(option == 2){
                 this.bookingFlight("yes");
+//                this.bookFlightByExistingPassengerID(passengerId);
             }
             else{
                 this.takeAnymoreActionsOrEnd();
@@ -101,7 +103,7 @@ public class FlightSystem {
 
     // TODO: Booking flight
     public void bookingFlight(String answer){
-
+        // "Are you an existing customer?"
         if(answer.equals("yes")){
             System.out.println("Do you have a preferred destination? ");
             String preferredAnswer = scanner.next().toLowerCase();
@@ -123,6 +125,7 @@ public class FlightSystem {
 
     // TODO: To book flight by flightId
     public void bookingFlightByFlightId(){
+
         System.out.println("Enter the flight ID to book a flight");
 
         String userPreferredFlightId = scanner.next().toUpperCase();
@@ -141,7 +144,7 @@ public class FlightSystem {
             passengerService.addPassenger(passenger);
             passengerService.bookFlight(userFlight, passenger);
             System.out.println("Thank you for flying with us \uD83D\uDE0A");
-            System.out.println("+-+-+-+-+-+-+-+-+-+\n" +
+            System.out.println(" +-+-+-+-+-+-+-+-+-+\n" +
                     " |i|m|p|o|r|t|a|n|t|\n" +
                     " +-+-+-+-+-+-+-+-+-+");
             System.out.println("Here is your Passenger ID :  " + passenger.getPassengerId());
@@ -164,6 +167,31 @@ public class FlightSystem {
         }
         return idExist;
     }
+
+//    // update
+//    // book flight according to the existing passengerID
+//    public void bookFlightByExistingPassengerID(String passengerId){
+//        System.out.println("Enter the flight ID to book a flight");
+//
+//        String userPreferredFlightId = scanner.next().toUpperCase();
+//        if (checkIfFlightIdExists(userPreferredFlightId)){
+//
+//            Flight userFlight = flightService.getFlightById(userPreferredFlightId);
+//            Passenger passenger = passengerService.getPassengerById(passengerId);
+//
+//            // book flight via Passenger Service
+//            passengerService.bookFlight(userFlight, passenger);
+//            System.out.println("Thank you for flying with us \uD83D\uDE0A");
+//
+//            // go back to the very top layer
+//            this.takeAnymoreActionsOrEnd();
+//        }else{
+//            System.out.println("Invalid Flight ID");
+//            this.bookFlightByExistingPassengerID(passengerId);
+//        }
+//
+//    }
+
 
     // TODO: Cancel flight
     public void cancelFlight(){
@@ -192,9 +220,11 @@ public class FlightSystem {
     public void displayAllAvailbleFlights(){
         System.out.println("---Flight ID---|---Destination---");
         flightService.getFlights()
-                .stream().forEach(f -> System.out.println("     " + f.getFlightId() + "      " + f.getDestination()));
+                .stream()
+                .forEach(f -> System.out.println("     " + f.getFlightId() + "      " + f.getDestination()));
 
     }
+
 
 
     public void searchByDestination(String destination){
@@ -217,7 +247,7 @@ public class FlightSystem {
                 System.out.println("                                                         ");
                 System.out.println("");
 
-                this.bookingFlightByFlightId();
+//                this.bookingFlightByFlightId();
 
         }
     }
@@ -263,19 +293,24 @@ public class FlightSystem {
 
 
     public void writePassengerDetailsToFile() throws Exception{
-        File file = new File("src/passengerBookedFlightsRecord.tx");
+        File file = new File("src/passengerBookedFlightsRecord.txt");
         if (!file.exists()){
             file.createNewFile();
         }
-        FileWriter fileWriter = new FileWriter(file, true);
+        FileWriter fileWriter = new FileWriter(file);
 
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
         for (Flight flight : flightService.getFlights()){
-            printWriter.println(flight.getFlightId() + "     " + flight.getDestination());
+            printWriter.println("Flight  Details");
+            printWriter.println("---Flight ID---|---Destination---");
+            printWriter.println("    " + flight.getFlightId() + "          " + flight.getDestination());
+            printWriter.println("Passenger Details");
+            printWriter.println("--Passenger ID--|---Name--- ");
             for(Passenger p : flight.getPassengers()) {
-                printWriter.println(p.getPassengerId() + "     " + p.getPassengerName());
+                printWriter.println("    " + p.getPassengerId() + "          " + p.getPassengerName());
             }
+            printWriter.println("-----------------------------------------");
         }
 
         printWriter.close();
@@ -301,11 +336,11 @@ public class FlightSystem {
     }
 
 
-    public static void main(String[] args){
-        FlightSystem fs = new FlightSystem();
-        fs.intro();
-
-    }
+//    public static void main(String[] args){
+//        FlightSystem fs = new FlightSystem();
+//        fs.intro();
+//
+//    }
 
 
 
