@@ -16,9 +16,6 @@ public class Main {
         ps1.bookFlight(f1, p1);
 
 
-
-        //System.out.println();
-
         System.out.println(p1.getPassengerBoughtFlights());
 
 

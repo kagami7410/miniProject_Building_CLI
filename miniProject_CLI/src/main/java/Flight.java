@@ -8,8 +8,7 @@ public class Flight {
     //properties 
 private String flightId;
 private String destination;
-private  List<Passenger> passengers;
-
+private List<Passenger> passengers;
 
 
     //constructor

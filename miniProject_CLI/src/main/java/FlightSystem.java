@@ -1,46 +1,63 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.Scanner;
 
 public class FlightSystem {
+
+
     private Scanner scanner;
     private PassengerService passengerService;
     private FlightService flightService;
 
 
 
-
     public FlightSystem(){
         this.flightService = new FlightService();
+        flightService.addFlight(new Flight("London"));
+        flightService.addFlight(new Flight("London"));
         flightService.addFlight(new Flight("London"));
         flightService.addFlight(new Flight("Manchester"));
         this.passengerService = new PassengerService();
         this.scanner = new Scanner(System.in);
     }
 
+    // TODO: Introduction to CLI
     public void intro(){
+        System.out.println("               _                          _ \n" +
+                "              | |                        | |\n" +
+                " __      _____| | ___ ___  _ __ ___   ___| |\n" +
+                " \\ \\ /\\ / / _ | |/ __/ _ \\| '_ ` _ \\ / _ | |\n" +
+                "  \\ V  V |  __| | (_| (_) | | | | | |  __|_|\n" +
+                "   \\_/\\_/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)");
         System.out.println("Welcome to British Airways");
         System.out.println("Would you like a Passenger Service or a Flight Service");
         start();
     }
 
+    // TODO: Beginning Command-Line Interface
     public void start(){
         System.out.println("Type '1' if you are a customer and '2' if admin");
         System.out.println("1.Customer      2.Admin");
         int firstOption = scanner.nextInt();
-        customerOrAdmin(firstOption);
+        this.customerOrAdmin(firstOption);
 
     }
 
-
-    //Exception
+    // TODO: Checking if user is customer or admin
     public void customerOrAdmin(int option) {
         if (option == 1) {
             System.out.println("Are you an existing customer?");
             System.out.println("Enter \'Yes\' or \'No\'");
             String existingCustomerResponse = scanner.next().toLowerCase();
-            customerAction(existingCustomerResponse);
+            this.customerAction(existingCustomerResponse);
 
         }else if (option == 2){
-            adminAddFlight();
+            this.adminAction();
+            this.takeAnymoreActionsOrEnd();
 
         }else{
             System.out.println("Wrong number!!!!!");
@@ -49,7 +66,7 @@ public class FlightSystem {
 
     }
 
-
+    // TODO: Customer Action
     private void customerAction(String response) {
 
         if(response.equals("yes")) {
@@ -58,6 +75,19 @@ public class FlightSystem {
             System.out.println("What action would you like to take?");
 
             System.out.println("Enter 1 for Cancel flight or       Enter 2 to book another flight");
+
+            int option = scanner.nextInt();
+
+            if(option == 1){
+                this.cancelFlight();
+            }
+            else if(option == 2){
+                this.bookingFlight("yes");
+            }
+            else{
+                this.takeAnymoreActionsOrEnd();
+            }
+
         }
         else if(response.equals("no")) {
             System.out.println("Do you want to book with us?");
@@ -66,10 +96,10 @@ public class FlightSystem {
         }
         else {
             this.start();
-//            customerOrAdmin(option);
         }
     }
 
+    // TODO: Booking flight
     public void bookingFlight(String answer){
 
         if(answer.equals("yes")){
@@ -77,47 +107,146 @@ public class FlightSystem {
             String preferredAnswer = scanner.next().toLowerCase();
             if (preferredAnswer.equals("yes")) {
                 System.out.println("Enter your destination");
-                String destination = scanner.next().toUpperCase();
-            // comeback later 
+                String destination = scanner.next();
+
+                this.searchByDestination(destination);
+                this.bookingFlightByFlightId();
 
             }else {
-                displayAllAvailbleFlights();
-                System.out.println("Enter the flight id to book a flight");
-                String userPreferredFlightId = scanner.next().toUpperCase();
-                Flight userFlight = flightService.getFlightById(userPreferredFlightId);
-                System.out.println("Enter your name");
-                String passengerName = scanner.next();
-                System.out.println("Enter your email address");
-                String passengerContact = scanner.next();
-
-                PassengerService passengerService1 = new PassengerService();
-                passengerService1.addPassenger(new Passenger(passengerName, passengerContact));
-
-
-
+                this.displayAllAvailbleFlights();
+                this.bookingFlightByFlightId();
             }
 
-        } else takeAnymoreActionsOrEnd();
+        } else this.takeAnymoreActionsOrEnd();
 
     }
 
+    // TODO: To book flight by flightId
+    public void bookingFlightByFlightId(){
+        System.out.println("Enter the flight ID to book a flight");
+
+        String userPreferredFlightId = scanner.next().toUpperCase();
 
 
+        if (checkIfFlightIdExists(userPreferredFlightId)){
+            Flight userFlight = flightService.getFlightById(userPreferredFlightId);
+            // create the passenger
+            System.out.println("Enter your name");
+            String passengerName = scanner.next();
+            System.out.println("Enter your email address");
+            String passengerContact = scanner.next();
 
+            // new passenger and book flight via Passenger Service
+            Passenger passenger = new Passenger(passengerName, passengerContact);
+            passengerService.addPassenger(passenger);
+            passengerService.bookFlight(userFlight, passenger);
+            System.out.println("Thank you for flying with us \uD83D\uDE0A");
+            System.out.println("+-+-+-+-+-+-+-+-+-+\n" +
+                    " |i|m|p|o|r|t|a|n|t|\n" +
+                    " +-+-+-+-+-+-+-+-+-+");
+            System.out.println("Here is your Passenger ID :  " + passenger.getPassengerId());
+
+            // go back to the very top layer
+            this.takeAnymoreActionsOrEnd();
+        }else{
+            System.out.println("Invalid Flight ID");
+            this.bookingFlight("yes");
+        }
+    }
+
+    public boolean checkIfFlightIdExists(String Id){
+        boolean idExist = false;
+        for(Flight flight: flightService.getFlights()){
+            if(flight.getFlightId().equals(Id)) {
+                idExist = true;
+                break;
+            }
+        }
+        return idExist;
+    }
+
+    // TODO: Cancel flight
+    public void cancelFlight(){
+            System.out.println("Enter the FlightId to cancel your flight");
+            String passengerFlightId = scanner.next();
+            if(checkIfFlightIdExists(passengerFlightId)){
+                flightService.removeFlight(flightService.getFlightById(passengerFlightId));
+                System.out.println("Your flight has been Cancelled");
+                System.out.println("------------------------------");
+                System.out.println("------------------------------");
+                System.out.println("------------------------------");
+
+
+                this.takeAnymoreActionsOrEnd();
+
+            }
+
+            else{
+                System.out.println("Invalid FlightId");
+                this.cancelFlight();
+            }
+    }
+
+    // TODO: To display all available flights
 
     public void displayAllAvailbleFlights(){
         System.out.println("---Flight ID---|---Destination---");
         flightService.getFlights()
-                .stream().forEach(f -> System.out.println("      " + f.getFlightId() + "           " + f.getDestination()));
+                .stream().forEach(f -> System.out.println("     " + f.getFlightId() + "      " + f.getDestination()));
 
-
-
-//        String customerPreferredFlightId = scanner.next().toUpperCase();
     }
 
 
-    public void adminAddFlight(){
+    public void searchByDestination(String destination){
 
+
+            List<Flight> matchedDestinationFlights = flightService.searchDestination(destination);
+
+            if(matchedDestinationFlights.size() == 0){
+                System.out.println("Sorry we don't fly there!");
+                this.bookingFlight("yes");
+
+            }
+            else{
+                System.out.println("---Flight ID---|---Destination---");
+                matchedDestinationFlights.stream()
+                        .forEach(flight -> {
+
+                            System.out.println("    " + flight.getFlightId() + "          " + flight.getDestination());
+                        });
+                System.out.println("                                                         ");
+                System.out.println("");
+
+                this.bookingFlightByFlightId();
+
+        }
+    }
+
+
+    // TODO: admin actions
+
+    // PassengerService--has List<Flight> flights----has flights.getPassenger(List<Passenger>)-- passenger.getName() && passenger.getId()
+    public void adminAction(){
+        System.out.println("What action would you like to take?");
+        System.out.println("Enter 1 to addFlight     or 2 to View booked flight");
+        int option = scanner.nextInt();
+        if(option == 1){
+            adminAddFlight();
+        }
+
+        else if(option == 2){
+            System.out.println("----Name------|------ID-----");
+            flightService.getFlights()
+                    .forEach(flight -> flight.getPassengers()
+                    .forEach(passenger -> System.out.println("    "+passenger.getPassengerName()+ "           "+passenger.getPassengerId())));
+
+        }
+
+    }
+
+
+
+    public void adminAddFlight(){
 
         System.out.println("Do you want to add a flight?");
         String adminAnswer = scanner.next().toLowerCase();
@@ -125,19 +254,49 @@ public class FlightSystem {
             System.out.println("Please enter the destination of the flight.");
             String destination = scanner.next();
             flightService.addFlight(new Flight(destination));
-            takeAnymoreActionsOrEnd();
+            this.takeAnymoreActionsOrEnd();
 
         }else{
-            takeAnymoreActionsOrEnd();
+            this.takeAnymoreActionsOrEnd();
         }
     }
 
+
+    public void writePassengerDetailsToFile() throws Exception{
+        File file = new File("src/passengerBookedFlightsRecord.tx");
+        if (!file.exists()){
+            file.createNewFile();
+        }
+        FileWriter fileWriter = new FileWriter(file, true);
+
+        PrintWriter printWriter = new PrintWriter(fileWriter);
+
+        for (Flight flight : flightService.getFlights()){
+            printWriter.println(flight.getFlightId() + "     " + flight.getDestination());
+            for(Passenger p : flight.getPassengers()) {
+                printWriter.println(p.getPassengerId() + "     " + p.getPassengerName());
+            }
+        }
+
+        printWriter.close();
+
+    }
+
+
+
+    // TODO: The action to bring user back to the beginning
     public void takeAnymoreActionsOrEnd(){
-        System.out.println("We would love to hear from you in the future!");
+
         System.out.println("Would you like to take anymore actions?");
         String answer = scanner.next().toLowerCase();
         if(answer.equals("yes")) this.start();
-        else System.out.println("See you next time");
+        else {
+            System.out.println("See you next time");
+            try{
+                this.writePassengerDetailsToFile();}
+            catch(Exception exception){
+            }
+        }
 
     }
 
@@ -145,12 +304,8 @@ public class FlightSystem {
     public static void main(String[] args){
         FlightSystem fs = new FlightSystem();
         fs.intro();
+
     }
-
-
-
-
-
 
 
 

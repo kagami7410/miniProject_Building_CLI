@@ -1,10 +1,15 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class PassengerService {
 
     //Properties
-    private static List<Passenger> passengers;
+    private List<Passenger> passengers;
 
+    //constructor
+    public PassengerService(){
+        this.passengers = new ArrayList<>();
+    }
 
 
     //Method to book a flight
