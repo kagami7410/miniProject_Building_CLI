@@ -186,7 +186,7 @@
 											"top": 131,
 											"width": 250.02783203125,
 											"height": 13,
-											"text": "+static flights: List<Flight>",
+											"text": "-static flights: List<Flight>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -536,7 +536,7 @@
 											"top": 403,
 											"width": 246,
 											"height": 13,
-											"text": "+static passengers: List<Passenger>",
+											"text": "-static passengers: List<Passenger>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -553,7 +553,7 @@
 											"top": 418,
 											"width": 246,
 											"height": 13,
-											"text": "+Flight flight;",
+											"text": "-Flight flight;",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1034,6 +1034,7 @@
 								"$ref": "AAAAAAGAj2O1l4sjShg="
 							},
 							"name": "static flights",
+							"visibility": "private",
 							"type": "List<Flight>"
 						}
 					],
@@ -1200,6 +1201,7 @@
 								"$ref": "AAAAAAGAj3K1K4ujBpw="
 							},
 							"name": "static passengers",
+							"visibility": "private",
 							"type": "List<Passenger>"
 						},
 						{
@@ -1209,6 +1211,7 @@
 								"$ref": "AAAAAAGAj3K1K4ujBpw="
 							},
 							"name": "Flight flight;",
+							"visibility": "private",
 							"type": ""
 						}
 					],
