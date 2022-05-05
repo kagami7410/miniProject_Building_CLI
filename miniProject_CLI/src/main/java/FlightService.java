@@ -41,6 +41,15 @@ public class FlightService {
     }
 
 
+    // get the flight object by flight id
+    public Flight getFlightById(String id){
+        Flight resultFlight = flights.stream()
+                .filter(i -> i.getFlightId().equals(id))
+                .toList().get(0);
+        return resultFlight;
+    }
+
+
 
 
 }
