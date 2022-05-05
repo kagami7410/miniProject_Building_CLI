@@ -1,3 +1,6 @@
+import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Flight {
@@ -5,12 +8,26 @@ public class Flight {
     //properties 
 private String flightId;
 private String destination;
-private List<Passenger> passengers;
-public static List<Flight> flights;
+private  List<Passenger> passengers;
+
+
 
     //constructor
-    public Flight(String flightId){
-        this.flightId = flightId;
+    public Flight(String destination){
+        this.passengers = new ArrayList<>();
+        this.destination = destination;
+        createFlightId();
+
+    }
+
+    //Method to create flightId
+    public void createFlightId(){
+
+        int length = 7;
+        boolean useLetters = true;
+        boolean useNumbers = true;
+        this.flightId = RandomStringUtils.random(length, useLetters, useNumbers).toUpperCase();
+
     }
 
     //Getters
@@ -26,19 +43,23 @@ public static List<Flight> flights;
         return passengers;
     }
 
-    public static List<Flight> getFlights() {
-        return flights;
-    }
-
 
     //Method to add passengers
     public void addPassenger(Passenger passenger){
-        passengers.add(passenger);
+        this.passengers.add(passenger);
     }
 
-    //Method to search destination
-    public Flight searchDestination(String destination){
-        return null;
+
+
+
+
+    @Override
+    public String toString() {
+        return "Flight{" +
+                "flightId='" + flightId + '\'' +
+                ", destination='" + destination + '\'' +
+                ", passengers=" + passengers +
+                '}';
 
     }
 

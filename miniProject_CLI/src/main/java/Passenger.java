@@ -1,5 +1,6 @@
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,15 +11,17 @@ public class Passenger {
     private String name;
     private String contact;
     private String passengerId;
-    private static List<Passenger> passengers;
-    public Flight flight;
+    private List<Flight> boughtFlights;
+
 
     //Constructor
     public Passenger(String name, String contact){
         this.name = name;
         this.contact = contact;
+        this.boughtFlights = new ArrayList<>();
         createPassengerId();
     }
+
     //Method to create passengerId
     public void createPassengerId(){
 
@@ -28,27 +31,43 @@ public class Passenger {
         this.passengerId = RandomStringUtils.random(length, useLetters, useNumbers).toUpperCase();
 
     }
-    //Method to book a flight
-    public void bookFlight(Flight flight){
-        this.flight = flight;
-        System.out.println(this.name + " your flight " + flight.getFlightId()
-                            + " has been booked.");
-        System.out.println("Enjoy your holiday in " + flight.getDestination());
+
+    //Getters
+
+    public String getPassengerName() {
+        return this.name;
     }
 
-
-    //Method to cancel a flight
-    public void cancelFlight(Flight flight){
-
-        flight.getPassengers().remove(this);
-        System.out.println(this.name + ", your flight " + flight.getFlightId()
-                           + " has been cancelled.");
-
-        // do you want to book another flight? boolean
+    public String getPassengerId() {
+        return this.passengerId;
     }
 
+    public String getPassengerContact() {
+        return this.contact;
+    }
 
+    public List<Flight> getPassengerBoughtFlights() {
+        return this.boughtFlights;
+    }
 
+    //Method to addTicket
+    // List<Flight> boughtFlights ----- boughtFlights.add()  // List<Integer> l1 ---- l1.add(233)
+    public void  addTicket(Flight flight){
+        boughtFlights.add(flight);}
 
+    //Method to removeTicket
+    public void removeTicket(Flight flight){
+        boughtFlights.remove(flight);
+
+    }
+
+    @Override
+    public String toString() {
+        return "Passenger{" +
+                "name='" + name + '\'' +
+                ", contact='" + contact + '\'' +
+                ", passengerId='" + passengerId + '\'' +
+                '}';
+    }
 }
 
