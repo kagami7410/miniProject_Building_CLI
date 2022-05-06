@@ -273,8 +273,9 @@ public class FlightSystem {
         int option = scanner.nextInt();
         if(option == 1) adminAddFlight();
         else if(option == 2) adminViewBookedFlight();
+        this.takeAnymoreActionsOrEnd();
     }
-    
+
 
     //TODO Admin can add flights
 
@@ -282,7 +283,6 @@ public class FlightSystem {
         System.out.println("Please enter the destination of the flight.");
         String destination = scanner.next();
         flightService.addFlight(new Flight(destination));
-        this.takeAnymoreActionsOrEnd();
     }
 
     public void adminViewBookedFlight(){
