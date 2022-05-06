@@ -20,6 +20,15 @@ public class FlightSystem {
         flightService.addFlight(new Flight("London"));
         flightService.addFlight(new Flight("London"));
         flightService.addFlight(new Flight("London"));
+        flightService.addFlight(new Flight("India"));
+        flightService.addFlight(new Flight("India"));
+        flightService.addFlight(new Flight("Thailand"));
+        flightService.addFlight(new Flight("Thailand"));
+        flightService.addFlight(new Flight("Dubai"));
+        flightService.addFlight(new Flight("Dubai"));
+        flightService.addFlight(new Flight("Pakistan"));
+        flightService.addFlight(new Flight("Home"));
+        flightService.addFlight(new Flight("Dubai"));
         flightService.addFlight(new Flight("Manchester"));
         this.passengerService = new PassengerService();
         this.scanner = new Scanner(System.in);
@@ -66,7 +75,7 @@ public class FlightSystem {
 
     }
 
-    // TODO: Customer Action
+    // TODO: Customer Action response to question (existing customer?)
     private void customerAction(String response) {
 
         // "are you an existing customer?"
@@ -93,6 +102,7 @@ public class FlightSystem {
         }
         else if(response.equals("no")) {
             System.out.println("Do you want to book with us?");
+            System.out.println("Enter \'Yes\' or \'No\'");
             String answer = scanner.next().toLowerCase();
             bookingFlight(answer);
         }
@@ -106,6 +116,7 @@ public class FlightSystem {
         // "Are you an existing customer?"
         if(answer.equals("yes")){
             System.out.println("Do you have a preferred destination? ");
+            System.out.println("Enter \'Yes\' or \'No\'");
             String preferredAnswer = scanner.next().toLowerCase();
             if (preferredAnswer.equals("yes")) {
                 System.out.println("Enter your destination");
@@ -226,7 +237,7 @@ public class FlightSystem {
     }
 
 
-
+    //TODO Search by destination
     public void searchByDestination(String destination){
 
 
@@ -234,7 +245,8 @@ public class FlightSystem {
 
             if(matchedDestinationFlights.size() == 0){
                 System.out.println("Sorry we don't fly there!");
-                this.bookingFlight("yes");
+//                this.bookingFlight("yes");
+                this.takeAnymoreActionsOrEnd();
 
             }
             else{
@@ -262,6 +274,9 @@ public class FlightSystem {
         if(option == 1) adminAddFlight();
         else if(option == 2) adminViewBookedFlight();
     }
+    
+
+    //TODO Admin can add flights
 
     public void adminAddFlight(){
         System.out.println("Please enter the destination of the flight.");
@@ -303,7 +318,9 @@ public class FlightSystem {
 
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
+
         for (Flight flight : flightService.getFlights()){
+            if(flight.getPassengers().size() == 0) continue;
             printWriter.println("Flight  Details");
             printWriter.println("---Flight ID---|---Destination---");
             printWriter.println("    " + flight.getFlightId() + "          " + flight.getDestination());
