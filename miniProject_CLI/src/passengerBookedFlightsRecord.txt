@@ -1,1 +1,7 @@
-
+Flight  Details
+---Flight ID---|---Destination---
+    KTTFNMJ          London
+Passenger Details
+--Passenger ID--|---Name--- 
+    VGVE3NI          Sujan
+-----------------------------------------
